@@ -1,5 +1,8 @@
 server:
-  port: 8998
+  port: 8997
 
-jwt:
-  secret: secretkey123
+webDav:
+  user: root
+  password: Mameie93
+  url: http://212.227.165.166/webdav/
+
