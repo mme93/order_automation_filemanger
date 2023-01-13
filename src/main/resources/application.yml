@@ -1,0 +1,5 @@
+server:
+  port: 8998
+
+jwt:
+  secret: secretkey123
