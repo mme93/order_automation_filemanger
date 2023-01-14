@@ -44,6 +44,7 @@ public class DocumentService {
 
     public boolean saveFile(String path, String fileName) {
         if (!new File(path + fileName).exists()) {
+            System.err.println("No, file found");
             return false;
         }
         try {
