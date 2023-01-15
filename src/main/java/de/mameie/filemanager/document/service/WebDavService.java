@@ -25,6 +25,8 @@ public class WebDavService {
     @Value("${webDav.url}")
     private String url;
 
+    private static String UPLOADED_FOLDER = "src/main/resources/upload/";
+
     public List<String> getFiles(String path) throws IOException {
         List<String> fileNames = new ArrayList<>();
         Sardine sardine = SardineFactory.begin(this.user, "!" + this.password);
@@ -41,23 +43,24 @@ public class WebDavService {
         return "Test";
     }
 
-    public boolean saveFile(String path, String fileName) {
-        if (!new File(path + fileName).exists()) {
-            System.err.println("No, file found: " + path + fileName);
+    public boolean saveFile(String fileName, String rootFolder) {
+        if (!new File(this.UPLOADED_FOLDER + fileName).exists()) {
+            System.err.println("No, file found: " + this.UPLOADED_FOLDER + fileName);
             return false;
         }
-
         try {
             Sardine sardine = SardineFactory.begin();
             sardine.setCredentials(this.user, "!" + this.password);
             sardine.enablePreemptiveAuthentication("http://212.227.165.166/webdav/");
-            System.out.println(url+"kfz/");
-            if(sardine.exists(url+"kfz/")){
-                System.err.println("Exist");
+            if(!sardine.exists(url+rootFolder)){
+                System.err.println("Not Exist");
+                return false;
             }
-            File file = new File(path + fileName);
+            File file = new File(this.UPLOADED_FOLDER + fileName);
             InputStream fis = new FileInputStream(file);
-            sardine.put(url+"kfz/"+fileName, fis);
+            //Replace all " "
+            fileName = fileName.replaceAll("\\s", "");
+            sardine.put(url+rootFolder+fileName.replaceAll("\\s", ""), fis);
             fis.close();
         }catch (IOException e) {
             System.err.println(e);

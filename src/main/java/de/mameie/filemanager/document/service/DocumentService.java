@@ -26,16 +26,16 @@ public class DocumentService {
         return "Test";
     }
 
-    public String saveFile(MultipartFile file) {
+    public boolean saveFile(MultipartFile file) {
         try {
-            // Get the file and save it somewhere
             byte[] bytes = file.getBytes();
             Path path = Paths.get(UPLOADED_FOLDER + file.getOriginalFilename());
             Files.write(path, bytes);
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
-        return "Successfully uploaded - " + file.getOriginalFilename();
+        return true;
     }
 
     public boolean deleteFile(String path) {

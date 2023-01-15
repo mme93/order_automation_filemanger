@@ -2,6 +2,7 @@ package de.mameie.filemanager.document.controller;
 
 import de.mameie.filemanager.document.service.DocumentService;
 import de.mameie.filemanager.document.service.WebDavService;
+import org.apache.catalina.valves.JsonErrorReportValve;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,14 +24,25 @@ public class DocumentController {
         this.documentService = documentService;
         this.webDavService = webDavService;
     }
-    @PostMapping("/test")
-    public ResponseEntity<String> test() {
-        return new ResponseEntity(this.webDavService.saveFile("src/main/resources/upload/","PassFoto.jpg"),HttpStatus.OK);
+
+    @PostMapping("/a")
+    public ResponseEntity<String> a(@RequestParam("file") List<MultipartFile> files) {
+
+        for(MultipartFile file:files){
+            if (!this.documentService.saveFile(file)) {
+
+            }
+        }
+        return new ResponseEntity<>("File(s) uploaded successfully!", HttpStatus.OK);
     }
+
 
     @PostMapping("/upload")
     public ResponseEntity<String> postFile(@RequestParam("file") MultipartFile file) {
-        return new ResponseEntity(this.documentService.saveFile(file),HttpStatus.OK);
+        if (!this.documentService.saveFile(file)) {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+        return new ResponseEntity(this.webDavService.saveFile(file.getOriginalFilename(), "kfz/"), HttpStatus.OK);
     }
 
     @GetMapping("/download")
