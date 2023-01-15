@@ -1,18 +1,14 @@
 package de.mameie.filemanager.document.controller;
 
 import de.mameie.filemanager.document.service.DocumentService;
+import de.mameie.filemanager.document.service.WebDavService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
@@ -20,12 +16,17 @@ import java.util.List;
 public class DocumentController {
 
     private final DocumentService documentService;
+    private final WebDavService webDavService;
 
     @Autowired
-    public DocumentController(DocumentService documentService) {
+    public DocumentController(DocumentService documentService, WebDavService webDavService) {
         this.documentService = documentService;
+        this.webDavService = webDavService;
     }
-
+    @PostMapping("/test")
+    public ResponseEntity<String> test() {
+        return new ResponseEntity(this.webDavService.saveFile("src/main/resources/upload/","PassFoto.jpg"),HttpStatus.OK);
+    }
 
     @PostMapping("/upload")
     public ResponseEntity<String> postFile(@RequestParam("file") MultipartFile file) {

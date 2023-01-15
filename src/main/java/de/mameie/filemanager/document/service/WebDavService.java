@@ -46,18 +46,24 @@ public class WebDavService {
             System.err.println("No, file found: " + path + fileName);
             return false;
         }
+
         try {
             Sardine sardine = SardineFactory.begin();
             sardine.setCredentials(this.user, "!" + this.password);
             sardine.enablePreemptiveAuthentication("http://212.227.165.166/webdav/");
-            InputStream fileStream = new FileInputStream(path + fileName);
-            sardine.put(this.url + "/document/" + fileName, fileStream);
-            return true;
-        } catch (IOException e) {
+            System.out.println(url+"kfz/");
+            if(sardine.exists(url+"kfz/")){
+                System.err.println("Exist");
+            }
+            File file = new File(path + fileName);
+            InputStream fis = new FileInputStream(file);
+            sardine.put(url+"kfz/"+fileName, fis);
+            fis.close();
+        }catch (IOException e) {
             System.err.println(e);
             return false;
         }
-
+        return true;
     }
 
     public boolean deleteFile(String path) {
