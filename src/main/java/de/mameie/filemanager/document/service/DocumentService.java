@@ -3,70 +3,48 @@ package de.mameie.filemanager.document.service;
 import com.github.sardine.DavResource;
 import com.github.sardine.Sardine;
 import com.github.sardine.SardineFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class DocumentService {
 
-    @Value("${webDav.user}")
-    private String user;
 
-    @Value("${webDav.password}")
-    private String password;
 
-    @Value("${webDav.url}")
-    private String url;
-
+    private static String UPLOADED_FOLDER = "src/main/resources/upload/";
 
     public List<String> getFiles(String path) throws IOException {
-        List<String> fileNames = new ArrayList<>();
-        Sardine sardine = SardineFactory.begin(this.user, "!" + this.password);
-        List<DavResource> resources = sardine.list(this.url + path);
-        for (DavResource res : resources) {
-            fileNames.add(res.getName());
-        }
-        return fileNames;
+
+        return null;
     }
 
     public String getFile(String path, String fileName) throws IOException {
-        Sardine sardine = SardineFactory.begin(this.user, "!" + this.password);
-        InputStream downloadStream = sardine.get(this.url + path + fileName);
+
         return "Test";
     }
 
-    public boolean saveFile(String path, String fileName) {
-        if (!new File(path + fileName).exists()) {
-            System.err.println("No, file found");
-            return false;
-        }
+    public String saveFile(MultipartFile file) {
         try {
-            Sardine sardine = SardineFactory.begin(this.user, "!" + this.password);
-            InputStream fileStream = new FileInputStream(path + fileName);
-            sardine.put(this.url + "/document/" + fileName, fileStream);
-            return true;
+            // Get the file and save it somewhere
+            byte[] bytes = file.getBytes();
+            Path path = Paths.get(UPLOADED_FOLDER + file.getOriginalFilename());
+            Files.write(path, bytes);
         } catch (IOException e) {
-            System.err.println(e);
-            return false;
+            e.printStackTrace();
         }
-
+        return "Successfully uploaded - " + file.getOriginalFilename();
     }
 
     public boolean deleteFile(String path) {
-        try {
-            Sardine sardine = SardineFactory.begin(this.user, "!" + this.password);
-            sardine.delete(this.url + path);
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
+       return true;
     }
 
 }
