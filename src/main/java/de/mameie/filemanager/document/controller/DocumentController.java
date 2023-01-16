@@ -2,7 +2,6 @@ package de.mameie.filemanager.document.controller;
 
 import de.mameie.filemanager.document.service.DocumentService;
 import de.mameie.filemanager.document.service.WebDavService;
-import org.apache.catalina.valves.JsonErrorReportValve;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,24 +24,19 @@ public class DocumentController {
         this.webDavService = webDavService;
     }
 
-    @PostMapping("/a")
+    @PostMapping("/upload")
     public ResponseEntity<String> a(@RequestParam("file") List<MultipartFile> files) {
-
         for(MultipartFile file:files){
-            if (!this.documentService.saveFile(file)) {
-
+            if (this.documentService.saveFile(file)) {
+                this.webDavService.saveFile(file.getOriginalFilename(), "kfz/");
             }
         }
         return new ResponseEntity<>("File(s) uploaded successfully!", HttpStatus.OK);
     }
-
-
-    @PostMapping("/upload")
-    public ResponseEntity<String> postFile(@RequestParam("file") MultipartFile file) {
-        if (!this.documentService.saveFile(file)) {
-            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-        }
-        return new ResponseEntity(this.webDavService.saveFile(file.getOriginalFilename(), "kfz/"), HttpStatus.OK);
+    @PostMapping("/createFolder/{folder}")
+    public ResponseEntity<String> createFolder(@PathVariable("folder")  String folder) {
+        this.webDavService.createFolder(folder);
+        return new ResponseEntity<>("File(s) uploaded successfully!", HttpStatus.OK);
     }
 
     @GetMapping("/download")
@@ -55,8 +49,9 @@ public class DocumentController {
         return new ResponseEntity<>(this.documentService.getFiles(""), HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<Boolean> deleteFile() throws IOException {
+    @DeleteMapping("/delete/{path}/{filename}")
+    public ResponseEntity<Boolean> deleteFile(@PathVariable("path")  String path,@PathVariable("filename")  String filename) throws IOException {
+        this.webDavService.deleteFile(path);
         return new ResponseEntity(this.documentService.deleteFile(""), HttpStatus.OK);
     }
 

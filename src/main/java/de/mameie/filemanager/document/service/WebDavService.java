@@ -42,7 +42,16 @@ public class WebDavService {
         InputStream downloadStream = sardine.get(this.url + path + fileName);
         return "Test";
     }
-
+    public boolean createFolder(String path){
+        try{
+            Sardine sardine = SardineFactory.begin(this.user, "!" + this.password);
+            sardine.createDirectory(this.url+path);
+            return true;
+        }catch (IOException e){
+            e.printStackTrace();
+            return false;
+        }
+    }
     public boolean saveFile(String fileName, String rootFolder) {
         if (!new File(this.UPLOADED_FOLDER + fileName).exists()) {
             System.err.println("No, file found: " + this.UPLOADED_FOLDER + fileName);
@@ -60,7 +69,14 @@ public class WebDavService {
             InputStream fis = new FileInputStream(file);
             //Replace all " "
             fileName = fileName.replaceAll("\\s", "");
-            sardine.put(url+rootFolder+fileName.replaceAll("\\s", ""), fis);
+            fileName = fileName.replaceAll("ä", "ae");
+            fileName = fileName.replaceAll("ö", "oe");
+            fileName = fileName.replaceAll("ü", "ue");
+            fileName = fileName.replaceAll("Ä", "AE");
+            fileName = fileName.replaceAll("Ö", "OE");
+            fileName = fileName.replaceAll("Ü", "UE");
+            fileName = fileName.replaceAll("ß", "ss");
+            sardine.put(url+rootFolder+fileName, fis);
             fis.close();
         }catch (IOException e) {
             System.err.println(e);
@@ -70,9 +86,19 @@ public class WebDavService {
     }
 
     public boolean deleteFile(String path) {
+        String paths=this.url+"kfz/";
         try {
             Sardine sardine = SardineFactory.begin(this.user, "!" + this.password);
-            sardine.delete(this.url + path);
+            List<String>files= new ArrayList<>();
+            List<DavResource> resources = sardine.list(paths);
+
+            for (DavResource res : resources) {
+                files.add(res.getName());
+                if(res.getName().contains(".")){
+                    sardine.delete(paths+res.getName());
+                }
+            }
+
             return true;
         } catch (IOException e) {
             return false;
