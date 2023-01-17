@@ -24,17 +24,29 @@ public class DocumentController {
         this.webDavService = webDavService;
     }
 
-    @PostMapping("/upload")
-    public ResponseEntity<String> a(@RequestParam("file") List<MultipartFile> files) {
-        for(MultipartFile file:files){
+    @PostMapping(value = "/test")
+    public ResponseEntity<String> test(@RequestParam("file") MultipartFile file) {
+        if (this.documentService.saveFile(file)) {
+            this.webDavService.saveFile(file.getOriginalFilename(), "kfz/");
+        }
+        return new ResponseEntity<>("File(s) uploaded successfully!", HttpStatus.OK);
+    }
+
+    @CrossOrigin(origins = "http://services-meier.deh")
+    @PostMapping(value = "/upload")
+    public ResponseEntity<String> a(
+            @RequestParam("file") List<MultipartFile> files
+    ) {
+        for (MultipartFile file : files) {
             if (this.documentService.saveFile(file)) {
                 this.webDavService.saveFile(file.getOriginalFilename(), "kfz/");
             }
         }
         return new ResponseEntity<>("File(s) uploaded successfully!", HttpStatus.OK);
     }
+
     @PostMapping("/createFolder/{folder}")
-    public ResponseEntity<String> createFolder(@PathVariable("folder")  String folder) {
+    public ResponseEntity<String> createFolder(@PathVariable("folder") String folder) {
         this.webDavService.createFolder(folder);
         return new ResponseEntity<>("File(s) uploaded successfully!", HttpStatus.OK);
     }
@@ -50,7 +62,7 @@ public class DocumentController {
     }
 
     @DeleteMapping("/delete/{path}/{filename}")
-    public ResponseEntity<Boolean> deleteFile(@PathVariable("path")  String path,@PathVariable("filename")  String filename) throws IOException {
+    public ResponseEntity<Boolean> deleteFile(@PathVariable("path") String path, @PathVariable("filename") String filename) throws IOException {
         this.webDavService.deleteFile(path);
         return new ResponseEntity(this.documentService.deleteFile(""), HttpStatus.OK);
     }
