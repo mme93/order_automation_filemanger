@@ -32,7 +32,7 @@ public class DocumentController {
         return new ResponseEntity<>("File(s) uploaded successfully!", HttpStatus.OK);
     }
 
-    @CrossOrigin(origins = "http://services-meier.deh")
+    @CrossOrigin(origins = "*")
     @PostMapping(value = "/upload")
     public ResponseEntity<String> a(
             @RequestParam("file") List<MultipartFile> files
