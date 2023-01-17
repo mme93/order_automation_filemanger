@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://services-meier.de")
 @RequestMapping("/document")
 public class DocumentController {
 
@@ -32,7 +33,7 @@ public class DocumentController {
         return new ResponseEntity<>("File(s) uploaded successfully!", HttpStatus.OK);
     }
 
-    @CrossOrigin(origins = "*")
+    @CrossOrigin(origins = "http://services-meier.de")
     @PostMapping(value = "/upload")
     public ResponseEntity<String> a(
             @RequestParam("file") List<MultipartFile> files
