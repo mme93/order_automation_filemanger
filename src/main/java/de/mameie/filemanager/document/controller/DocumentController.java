@@ -1,74 +1,38 @@
 package de.mameie.filemanager.document.controller;
 
-import de.mameie.filemanager.document.service.DocumentService;
 import de.mameie.filemanager.document.service.WebDavService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://services-meier.de")
 @RequestMapping("/document")
 public class DocumentController {
 
-    private final DocumentService documentService;
+
     private final WebDavService webDavService;
-    private final ResourceLoader resourceLoader;
 
     @Autowired
-    public DocumentController(DocumentService documentService, WebDavService webDavService, ResourceLoader resourceLoader) {
-        this.documentService = documentService;
+    public DocumentController(WebDavService webDavService) {
         this.webDavService = webDavService;
-        this.resourceLoader = resourceLoader;
     }
-    @GetMapping("/paths")
-    public void getPaths() throws IOException {
-        Resource resource = resourceLoader.getResource("classpath:static");
-        InputStream inputStream = resource.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        String line;
-        while((line = reader.readLine()) != null){
-            System.out.println(line);
-        }
-        reader.close();
-    }
-    @GetMapping("/path")
-    public void getPath() throws IOException {
-        Resource resource = resourceLoader.getResource("classpath:static/upload");
-        InputStream inputStream = resource.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        String line;
-        while((line = reader.readLine()) != null){
-            System.out.println(line);
-        }
-        reader.close();
-    }
+
+
     @PostMapping(value = "/upload/single")
     public ResponseEntity<String> upload(@RequestParam("file") MultipartFile file) {
-        if (this.documentService.saveFile(file)) {
-            this.webDavService.saveFile(file.getOriginalFilename(), "kfz/");
-        }
+        this.webDavService.saveFile(file, "kfz/");
         return new ResponseEntity<>("File(s) uploaded successfully!", HttpStatus.OK);
     }
 
     @PostMapping(value = "/upload")
-    public ResponseEntity<String> uploads(
-            @RequestParam("file") List<MultipartFile> files
-    ) {
+    public ResponseEntity<String> uploads(@RequestParam("file") List<MultipartFile> files) {
         for (MultipartFile file : files) {
-            if (this.documentService.saveFile(file)) {
-                this.webDavService.saveFile(file.getOriginalFilename(), "kfz/");
-            }
+            this.webDavService.saveFile(file, "kfz/");
         }
         return new ResponseEntity<>("File(s) uploaded successfully!", HttpStatus.OK);
     }
@@ -81,18 +45,18 @@ public class DocumentController {
 
     @GetMapping("/download")
     public String getFile() throws IOException {
-        return this.documentService.getFile("", "");
+        return "Test";
     }
 
     @GetMapping("/files")
     public ResponseEntity<List<String>> getFiles() throws IOException {
-        return new ResponseEntity<>(this.documentService.getFiles(""), HttpStatus.OK);
+        return new ResponseEntity("Test", HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{path}/{filename}")
     public ResponseEntity<Boolean> deleteFile(@PathVariable("path") String path, @PathVariable("filename") String filename) throws IOException {
         this.webDavService.deleteFile(path);
-        return new ResponseEntity(this.documentService.deleteFile(""), HttpStatus.OK);
+        return new ResponseEntity("Test", HttpStatus.OK);
     }
 
 }

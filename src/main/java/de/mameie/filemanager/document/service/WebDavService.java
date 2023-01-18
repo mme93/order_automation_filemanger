@@ -5,6 +5,7 @@ import com.github.sardine.Sardine;
 import com.github.sardine.SardineFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -52,6 +53,36 @@ public class WebDavService {
             return false;
         }
     }
+    public boolean saveFile(MultipartFile file, String rootFolder) {
+
+        try {
+            Sardine sardine = SardineFactory.begin();
+            sardine.setCredentials(this.user, "!" + this.password);
+            sardine.enablePreemptiveAuthentication("http://212.227.165.166/webdav/");
+            if(!sardine.exists(url+rootFolder)){
+                System.err.println("Not Exist");
+                return false;
+            }
+            InputStream fis = file.getInputStream();
+            String fileName= file.getOriginalFilename();
+            //Replace all " "
+            fileName = fileName.replaceAll("\\s", "");
+            fileName = fileName.replaceAll("ä", "ae");
+            fileName = fileName.replaceAll("ö", "oe");
+            fileName = fileName.replaceAll("ü", "ue");
+            fileName = fileName.replaceAll("Ä", "AE");
+            fileName = fileName.replaceAll("Ö", "OE");
+            fileName = fileName.replaceAll("Ü", "UE");
+            fileName = fileName.replaceAll("ß", "ss");
+            //sardine.put(url+rootFolder+fileName, fis);
+            fis.close();
+        }catch (IOException e) {
+            System.err.println(e);
+            return false;
+        }
+        return true;
+    }
+    /*
     public boolean saveFile(String fileName, String rootFolder) {
         if (!new File(this.UPLOADED_FOLDER + fileName).exists()) {
             System.err.println("No, file found: " + this.UPLOADED_FOLDER + fileName);
@@ -84,6 +115,7 @@ public class WebDavService {
         }
         return true;
     }
+     */
 
     public boolean deleteFile(String path) {
         String paths=this.url+"kfz/";
