@@ -28,7 +28,7 @@ public class DocumentController {
         this.webDavService.saveFile(file, "kfz/");
         return new ResponseEntity<>("File(s) uploaded successfully!", HttpStatus.OK);
     }
-    @CrossOrigin("*")
+
     @PostMapping(value = "/upload")
     public ResponseEntity<String> uploads(@RequestParam("file") List<MultipartFile> files) {
         for (MultipartFile file : files) {
