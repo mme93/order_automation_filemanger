@@ -23,12 +23,13 @@ public class DocumentController {
 
     private final DocumentService documentService;
     private final WebDavService webDavService;
-    private ResourceLoader resourceLoader;
+    private final ResourceLoader resourceLoader;
 
     @Autowired
-    public DocumentController(DocumentService documentService, WebDavService webDavService) {
+    public DocumentController(DocumentService documentService, WebDavService webDavService, ResourceLoader resourceLoader) {
         this.documentService = documentService;
         this.webDavService = webDavService;
+        this.resourceLoader = resourceLoader;
     }
     @GetMapping("/paths")
     public void getPaths() throws IOException {
