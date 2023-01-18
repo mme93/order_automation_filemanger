@@ -25,17 +25,16 @@ public class DocumentController {
         this.webDavService = webDavService;
     }
 
-    @PostMapping(value = "/test")
-    public ResponseEntity<String> test(@RequestParam("file") MultipartFile file) {
+    @PostMapping(value = "/upload/single")
+    public ResponseEntity<String> upload(@RequestParam("file") MultipartFile file) {
         if (this.documentService.saveFile(file)) {
             this.webDavService.saveFile(file.getOriginalFilename(), "kfz/");
         }
         return new ResponseEntity<>("File(s) uploaded successfully!", HttpStatus.OK);
     }
 
-    @CrossOrigin(origins = "http://services-meier.de")
     @PostMapping(value = "/upload")
-    public ResponseEntity<String> a(
+    public ResponseEntity<String> uploads(
             @RequestParam("file") List<MultipartFile> files
     ) {
         for (MultipartFile file : files) {
