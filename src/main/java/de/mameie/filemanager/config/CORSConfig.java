@@ -11,7 +11,7 @@ public class CORSConfig extends WebMvcConfigurerAdapter {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedMethods("*")
-                .allowedOrigins("http://services-meier.de")
+                .allowedOrigins("*")
                 .allowedHeaders("*")
                 .exposedHeaders("*")
                 .maxAge(1800L);

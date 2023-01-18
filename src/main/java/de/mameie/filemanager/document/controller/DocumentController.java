@@ -25,6 +25,10 @@ public class DocumentController {
         this.webDavService = webDavService;
     }
 
+    @GetMapping("/path")
+    public void getPath(){
+
+    }
     @PostMapping(value = "/upload/single")
     public ResponseEntity<String> upload(@RequestParam("file") MultipartFile file) {
         if (this.documentService.saveFile(file)) {
