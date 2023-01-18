@@ -8,7 +8,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 
 @RestController
@@ -26,8 +29,14 @@ public class DocumentController {
     }
 
     @GetMapping("/path")
-    public void getPath(){
-
+    public void getPath() throws IOException {
+        InputStream inputStream = getClass().getResourceAsStream("/upload");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        String line;
+        while((line = reader.readLine()) != null){
+            System.out.println(line);
+        }
+        reader.close();
     }
     @PostMapping(value = "/upload/single")
     public ResponseEntity<String> upload(@RequestParam("file") MultipartFile file) {
