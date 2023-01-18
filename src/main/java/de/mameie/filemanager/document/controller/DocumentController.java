@@ -3,6 +3,8 @@ package de.mameie.filemanager.document.controller;
 import de.mameie.filemanager.document.service.DocumentService;
 import de.mameie.filemanager.document.service.WebDavService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,16 +23,28 @@ public class DocumentController {
 
     private final DocumentService documentService;
     private final WebDavService webDavService;
+    private ResourceLoader resourceLoader;
 
     @Autowired
     public DocumentController(DocumentService documentService, WebDavService webDavService) {
         this.documentService = documentService;
         this.webDavService = webDavService;
     }
-
+    @GetMapping("/paths")
+    public void getPaths() throws IOException {
+        Resource resource = resourceLoader.getResource("classpath:static");
+        InputStream inputStream = resource.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        String line;
+        while((line = reader.readLine()) != null){
+            System.out.println(line);
+        }
+        reader.close();
+    }
     @GetMapping("/path")
     public void getPath() throws IOException {
-        InputStream inputStream = getClass().getResourceAsStream("/upload");
+        Resource resource = resourceLoader.getResource("classpath:static/upload");
+        InputStream inputStream = resource.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         String line;
         while((line = reader.readLine()) != null){
