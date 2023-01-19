@@ -6,3 +6,5 @@ webDav:
   password: Mameie93
   url: http://212.227.165.166/webdav/
 
+jwt:
+  secret: secretkey123
