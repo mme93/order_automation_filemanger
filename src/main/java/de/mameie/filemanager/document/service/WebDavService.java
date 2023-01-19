@@ -74,7 +74,7 @@ public class WebDavService {
             fileName = fileName.replaceAll("Ö", "OE");
             fileName = fileName.replaceAll("Ü", "UE");
             fileName = fileName.replaceAll("ß", "ss");
-            //sardine.put(url+rootFolder+fileName, fis);
+            sardine.put(url+rootFolder+fileName, fis);
             fis.close();
         }catch (IOException e) {
             System.err.println(e);
