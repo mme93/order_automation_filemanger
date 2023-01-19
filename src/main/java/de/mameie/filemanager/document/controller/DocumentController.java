@@ -31,7 +31,6 @@ public class DocumentController {
 
     @PostMapping(value = "/upload")
     public ResponseEntity<String> uploads(@RequestParam("file") List<MultipartFile> files) {
-        System.err.println("Upload Data");
         for (MultipartFile file : files) {
             this.webDavService.saveFile(file, "kfz/");
         }
